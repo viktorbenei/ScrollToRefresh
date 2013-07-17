@@ -60,7 +60,7 @@
 - (void)dealloc {
 	self.refreshBlock = nil;
 	self._arrowLayer  = nil;
-	[super dealloc];
+//	[super dealloc];
 }
 
 #pragma mark - Create Header View
@@ -82,7 +82,7 @@
 		clipView.drawsBackground = NO;
 		
 		[self setContentView:clipView];
-		[clipView release];
+//		[clipView release];
 		
 		superClipView            = [super contentView];
 		
@@ -94,7 +94,7 @@
 	// delete old stuff if any
 	if (self.refreshHeader) {		
 		[_refreshHeader removeFromSuperview];
-		[_refreshHeader release];
+//		[_refreshHeader release];
 		_refreshHeader = nil;
 	}
 	
@@ -118,7 +118,7 @@
 															  REFRESH_HEADER_HEIGHT)];
 	
 	// Create Arrow
-	NSImage *arrowImage = [NSImage imageNamed:@"arrow"];
+	NSImage *arrowImage = self.refreshArrowImage; //[NSImage imageNamed:@"arrow"];
 	_refreshArrow       = [[NSView alloc] initWithFrame:NSMakeRect(floor(NSMidX(self.refreshHeader.bounds) - arrowImage.size.width / 2), 
 																   floor(NSMidY(self.refreshHeader.bounds) - arrowImage.size.height / 2), 
 																   arrowImage.size.width,
@@ -164,8 +164,8 @@
 	
 	[self.contentView addSubview:self.refreshHeader];	
 	
-	[_refreshArrow release];
-	[_refreshSpinner release];
+//	[_refreshArrow release];
+//	[_refreshSpinner release];
 	
 	// Scroll to top
 	[self.contentView scrollToPoint:NSMakePoint(contentRect.origin.x, 0)];

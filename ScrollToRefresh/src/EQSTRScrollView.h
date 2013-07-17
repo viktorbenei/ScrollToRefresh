@@ -29,6 +29,7 @@
 
 @property (readonly) NSView *refreshHeader;
 @property (readonly) NSProgressIndicator *refreshSpinner;
+@property (nonatomic, strong) NSImage *refreshArrowImage;
 @property (readonly) NSView *refreshArrow;
 
 @property (nonatomic, copy) void (^refreshBlock)(EQSTRScrollView *scrollView);
