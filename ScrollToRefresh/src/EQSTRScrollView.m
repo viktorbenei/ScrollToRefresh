@@ -90,6 +90,44 @@
 	return superClipView;
 }
 
+- (void)activateRefreshSpinner:(BOOL)isActivateIt
+{
+    if( isActivateIt )
+    {
+        if( !_refreshSpinner )
+        {
+            _refreshSpinner = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(floor(NSMidX(self.refreshHeader.bounds) - 30),
+                                                                                    floor(NSMidY(self.refreshHeader.bounds) - 20),
+                                                                                    60.0f,
+                                                                                    40.0f)];
+            self.refreshSpinner.style                 = NSProgressIndicatorSpinningStyle;
+            self.refreshSpinner.displayedWhenStopped  = NO;
+            self.refreshSpinner.usesThreadedAnimation = YES;
+            self.refreshSpinner.indeterminate         = YES;
+            self.refreshSpinner.bezeled               = NO;
+            [self.refreshSpinner sizeToFit];
+            
+            // Center the spinner in the header
+            [self.refreshSpinner setFrame:NSMakeRect(floor(NSMidX(self.refreshHeader.bounds) - self.refreshSpinner.frame.size.width / 2),
+                                                     floor(NSMidY(self.refreshHeader.bounds) - self.refreshSpinner.frame.size.height / 2),
+                                                     self.refreshSpinner.frame.size.width,
+                                                     self.refreshSpinner.frame.size.height)];
+            
+            // set autoresizing masks
+            self.refreshSpinner.autoresizingMask = NSViewMinXMargin | NSViewMaxXMargin | NSViewMinYMargin | NSViewMaxYMargin; // center
+        }
+        if( self.refreshSpinner.superview == nil ) {
+            [self.refreshHeader addSubview:self.refreshSpinner];
+        }
+        [self.refreshSpinner startAnimation:self];
+    }
+    else
+    {
+        [self.refreshSpinner stopAnimation:self];
+        [self.refreshSpinner removeFromSuperview];
+    }
+}
+
 - (void)createHeaderView {
 	// delete old stuff if any
 	if (self.refreshHeader) {		
@@ -135,32 +173,11 @@
 	
 	[self.refreshArrow.layer addSublayer:self._arrowLayer];
 	
-	// Create spinner
-	_refreshSpinner = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(floor(NSMidX(self.refreshHeader.bounds) - 30),
-																			floor(NSMidY(self.refreshHeader.bounds) - 20), 
-																			60.0f, 
-																			40.0f)];
-	self.refreshSpinner.style                 = NSProgressIndicatorSpinningStyle;
-	self.refreshSpinner.displayedWhenStopped  = NO;
-	self.refreshSpinner.usesThreadedAnimation = YES;
-	self.refreshSpinner.indeterminate         = YES;
-	self.refreshSpinner.bezeled               = NO;
-	[self.refreshSpinner sizeToFit];
-	
-	// Center the spinner in the header
-	[self.refreshSpinner setFrame:NSMakeRect(floor(NSMidX(self.refreshHeader.bounds) - self.refreshSpinner.frame.size.width / 2),
-											 floor(NSMidY(self.refreshHeader.bounds) - self.refreshSpinner.frame.size.height / 2), 
-											 self.refreshSpinner.frame.size.width, 
-											 self.refreshSpinner.frame.size.height)];
-	
-	// set autoresizing masks
-	self.refreshSpinner.autoresizingMask = NSViewMinXMargin | NSViewMaxXMargin | NSViewMinYMargin | NSViewMaxYMargin; // center
 	self.refreshArrow.autoresizingMask   = NSViewMinXMargin | NSViewMaxXMargin | NSViewMinYMargin | NSViewMaxYMargin; // center
 	self.refreshHeader.autoresizingMask  = NSViewWidthSizable | NSViewMinXMargin | NSViewMaxXMargin; // stretch/center
 	
 	// Put everything in place
 	[self.refreshHeader addSubview:self.refreshArrow];
-	[self.refreshHeader addSubview:self.refreshSpinner];
 	
 	[self.contentView addSubview:self.refreshHeader];	
 	
@@ -227,7 +244,7 @@
 	[self didChangeValueForKey:@"isRefreshing"];
 	
 	self.refreshArrow.hidden = YES;
-	[self.refreshSpinner startAnimation:self];
+    [self activateRefreshSpinner:YES];
 	
 	if (self.refreshBlock) {
 		self.refreshBlock(self);
@@ -238,7 +255,7 @@
 	self.refreshArrow.hidden            = NO;	
 	
 	[self.refreshArrow layer].transform = CATransform3DMakeRotation(M_PI * 2, 0, 0, 1);
-	[self.refreshSpinner stopAnimation:self];
+    [self activateRefreshSpinner:NO];
 	
 	// now fake an event of scrolling for a natural look
 	
